@@ -1,7 +1,12 @@
+/*
+Copyright (c) David Wagg 2016
+
+This program is released under the "GNU GPL v3" License
+Please see the file License in this distribution for the license terms
+*/
+
 package basic;
-
 import java.util.ArrayList;
-
 import org.la4j.Matrix;
 import org.la4j.matrix.*;
 

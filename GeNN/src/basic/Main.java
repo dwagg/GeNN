@@ -1,9 +1,15 @@
+/*
+Copyright (c) David Wagg 2016
+
+This program is released under the "GNU GPL v3" License 
+Please see the file License in this distribution for license terms
+*/
+
 package basic;
 import java.lang.Math;
 public class Main {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
 		System.out.println("test");
 		double [][] x = new double[1][];
