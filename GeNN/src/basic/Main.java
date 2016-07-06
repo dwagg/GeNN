@@ -5,7 +5,13 @@ public class Main {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
-		System.out.println("Testing of functions\n" + tanh(Math.PI) + '\n' + sigmoid(Math.PI));
+		System.out.println("test");
+		double [][] x = new double[1][];
+		x[0] = new double [3];
+		for (int i =0; i < 3; i++)
+		{
+			x[0][i] = i+2;
+		}
 		
 	}
 	
