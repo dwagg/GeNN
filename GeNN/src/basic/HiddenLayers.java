@@ -12,15 +12,16 @@ import java.util.ArrayList;
 public class HiddenLayers {
 	private int numOfLayers;
 	private ArrayList<Integer> sizeOfLayers;
+	private ArrayList<Layer> layers;
 	
 	public HiddenLayers(int numOfLayers, int[] sizeOfLayers)
 	{
-		assert (numOfLayers == sizeOfLayers.length);
+		assert numOfLayers == sizeOfLayers.length;
 		this.sizeOfLayers = new ArrayList<Integer>();
 		this.numOfLayers = numOfLayers;
 		for (int i = 0; i < numOfLayers; i++)
 		{
-			
+			this.sizeOfLayers.add(sizeOfLayers[i]);
 		}
 		
 	}

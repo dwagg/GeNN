@@ -6,12 +6,8 @@ Please see the file License in this distribution for license terms
 */
 
 package basic;
-import java.io.File;
-import java.lang.Math;
-public class Main {
 
-	public static void main(String[] args) 
-	{
-		ImportCSV.ImportData("./dummy/data.csv");
-	}
+public class OutputLayer {
+
+	protected int numOfNodes;
 }

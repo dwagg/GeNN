@@ -6,9 +6,11 @@ Please see the file License in this distribution for the license terms
 */
 
 package basic;
+import java.io.File;
 import java.util.ArrayList;
 import org.la4j.Matrix;
 import org.la4j.matrix.*;
+import org.la4j.matrix.sparse.CRSMatrix;
 
 public class Network {
 	protected Matrix matrix;
@@ -29,6 +31,34 @@ public class Network {
 			matrix << file;
 		}while(x != file.eof());
 		 */
-		 
+		//construct the matrices for the layers using data file and the size of the layers/connections 
+	}
+	
+	public Matrix buildInputDataMatrix(File dataFile, InputLayer inputLayer)
+	{
+		CRSMatrix m = CRSMatrix.zero(10, 10);
+		return m;
+	}
+	
+	public static double tanh(double in)
+	{
+		return Math.tanh(in);
+	}
+	
+	public static double tanhPrime(double in)
+	{
+		return (1-(tanh(in)*tanh(in)));
+	}
+	
+	public static double sigmoid(double in)
+	{
+		double out = 1d/(1+ Math.exp(-in));
+		return out;
+	}
+	
+	public static double sigmoidPrime(double in)
+	{
+		double out = Math.exp(in)/Math.pow((1 +Math.exp(in)),2);
+		return out;
 	}
 }
