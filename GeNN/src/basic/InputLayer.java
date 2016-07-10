@@ -1,7 +1,7 @@
 /*
-Copyright (c) David Wagg 2016
+Copyright (c) 2016 David Wagg
 
-This program is released under the "GNU GPL v3" License
+This program is released under the "GNU GPL v3" License 
 Please see the file License in this distribution for license terms
 */
 
