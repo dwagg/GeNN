@@ -7,12 +7,13 @@ Please see the file License in this distribution for license terms
 
 package basic;
 
-public class InputLayer {
+import org.la4j.matrix.sparse.CRSMatrix;
+import org.la4j.vector.functor.VectorAccumulator;
 
-	protected int numOfNodes;
+public class InputLayer extends Layer{
 	
-	public InputLayer(int numOfNodes)
+	public InputLayer(String filePath)
 	{
-		this.numOfNodes = numOfNodes;
+		super(ImportCSV.getNumOfVars(filePath), ImportCSV.getNumOfVars(filePath),ImportCSV.normalizeData((CRSMatrix) ImportCSV.ImportData(filePath)));
 	}
 }

@@ -113,4 +113,35 @@ public class ImportCSV {
 		return CRSMatrix.from1DArray(matrix.rows(), matrix.columns(), arrNorms);
 	}
 	
+	public static int getNumOfVars(String filePath)
+	{
+		int sizeOfInput = 0;
+		
+		URL url = ClassLoader.getSystemClassLoader().getResource(filePath);
+		try {
+			//Find the url to the file from the filePAth
+			
+			File inFile = new File(url.toURI());
+			//Make file scanner
+			Scanner fileScanner = new Scanner(inFile);
+			fileScanner.useDelimiter("\n");
+			
+			if (fileScanner.hasNext())
+			{
+				String [] inputs = fileScanner.next().split(",");
+				sizeOfInput = inputs.length;
+			}
+			
+			fileScanner.close();
+			} catch (FileNotFoundException e) {
+				System.out.println("The file: " + filePath + " could not be found.");
+				e.printStackTrace();
+			} 
+			catch (URISyntaxException e) {
+			 	System.out.println("The file path: " + url.toString() + " caused a syntax exception.");
+				e.printStackTrace();
+			}
+		return sizeOfInput;
+	}
+	
 }
