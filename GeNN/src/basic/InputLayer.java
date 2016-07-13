@@ -12,8 +12,22 @@ import org.la4j.vector.functor.VectorAccumulator;
 
 public class InputLayer extends Layer{
 	
-	public InputLayer(String filePath)
+	public InputLayer(int numOfNeurons)
 	{
-		super(ImportCSV.getNumOfVars(filePath), ImportCSV.getNumOfVars(filePath),ImportCSV.normalizeData((CRSMatrix) ImportCSV.ImportData(filePath)));
+		super(numOfNeurons, 0);
+	}
+	
+	public CRSMatrix prepOutSignal()
+	{
+		return input;
+	}
+	
+	public void initLayer(CRSMatrix input)
+	{
+		this.input = input;
+		for(int i = 0; i < this.numOfNeurons * numOfNeurons;i++)
+		{
+			this.weights.add(1d);
+		}
 	}
 }

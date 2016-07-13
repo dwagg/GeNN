@@ -17,41 +17,57 @@ public class Layer {
 
 	protected ArrayList<Neuron> neurons;
 	protected CRSMatrix input;
-	public CRSMatrix getInput() {
-		return input;
-	}
-
 	protected int incomingSignals;
+	protected int numOfNeurons;
 	//protected BasicVector values;
 	protected ArrayList<Double> weights;
-	public Layer(int numOfNeurons, int incomingSignals, CRSMatrix input)
+
+	public Layer(int numOfNeurons, int incomingSignals)
 	{
 		this.neurons = new ArrayList<>();
 		this.weights = new ArrayList<>();
-		this.input = input;
-		//This code to be removed, for testing purposes only===================================
-		for (int i = 0; i < numOfNeurons * incomingSignals; i++)
+		this.numOfNeurons = numOfNeurons;
+		this.incomingSignals = incomingSignals;
+	}
+	
+	public void initLayer(CRSMatrix input)
+	{
+		setInput(input);
+		generateWeights();
+		buildNeurons();
+		
+		for (Neuron neuron: neurons)
 		{
-			Random rand = new Random();
+			neuron.setInSignal(input);
+		}
+	}
+	
+	public void generateWeights()
+	{
+		Random rand = new Random();
+		for (int i = 0; i < numOfNeurons * incomingSignals;i++)
+		{
 			weights.add(rand.nextDouble());
 		}
-		
-		//This is the end of the diagnostic code===============================================
-		for (int i = 0; i < numOfNeurons; i++)
+
+	}
+	
+	public void buildNeurons()
+	{
+		for (int i =0; i < numOfNeurons; i++)
 		{
 			ArrayList<Double> neuronWeights = new ArrayList<Double>();
 			for (int j = 0; j < incomingSignals; j++)
 			{
 				neuronWeights.add(weights.get((incomingSignals * i + j)));
 			}
-			neurons.add(new Neuron(neuronWeights, input));
+			neurons.add(new Neuron(neuronWeights));
 		}
 	}
 	
 	//For each one of the neurons calculate a value vector then make a matrix out of all of the value Vectors as the output signal
 	public CRSMatrix prepOutSignal()
 	{
-		final int numOfNeurons = neurons.size();
 		ArrayList<BasicVector> listOfVectors = new ArrayList<BasicVector>();
 		
 		for (int i = 0; i < numOfNeurons; i++)
@@ -73,5 +89,15 @@ public class Layer {
 	public void setInput(CRSMatrix input)
 	{
 		this.input = input;
+	}
+	
+	public int getNumOfNeurons()
+	{
+		return numOfNeurons;
+	}
+	
+	public CRSMatrix getInput()
+	{
+		return input;
 	}
 }

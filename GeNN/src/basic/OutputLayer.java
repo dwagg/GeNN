@@ -7,7 +7,12 @@ Please see the file License in this distribution for license terms
 
 package basic;
 
-public class OutputLayer {
+import org.la4j.matrix.sparse.CRSMatrix;
 
-	protected int numOfNodes;
+public class OutputLayer extends Layer{
+
+	public OutputLayer(int numOfNeurons, int incomingSignals){
+		super(numOfNeurons, incomingSignals);
+		
+	}
 }

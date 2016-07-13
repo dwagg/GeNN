@@ -13,17 +13,18 @@ import org.la4j.matrix.*;
 import org.la4j.matrix.sparse.CRSMatrix;
 
 public class Network {
-	protected Matrix matrix;
+
 	protected InputLayer inputLayer;
 	protected HiddenLayers hiddenLayers;
 	protected OutputLayer outputlayer;
 	
 	//Constructor takes an input layer, hidden layers and an output layer as well as a file name where the data is
-	public Network(InputLayer inputLayer, HiddenLayers hiddenLayers, OutputLayer outputLayer, String dataFileName)
+	public Network(String filePath, int numOfHiddenLayers,ArrayList<Integer> hiddenLayerSizes, int outputLayerSize)
 	{
-		this.inputLayer = inputLayer;
-		this.hiddenLayers = hiddenLayers;
-		this.outputlayer = outputLayer;
+		
+		this.inputLayer = new InputLayer(ImportCSV.getNumOfVars(filePath));
+		this.hiddenLayers = new HiddenLayers(numOfHiddenLayers,hiddenLayerSizes,this.inputLayer);
+//		this.outputlayer = outputLayer;
 		
 		/*
 		char in = 'x';

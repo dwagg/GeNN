@@ -16,11 +16,10 @@ public class Neuron {
 	protected CRSMatrix inSignal;
 	protected BasicVector values;
 	protected int inputSize;
-	public Neuron(ArrayList<Double> weightList, CRSMatrix inSignal)
+	public Neuron(ArrayList<Double> weightList)
 	{
 
 		inputSize = weightList.size();
-		this.inSignal = inSignal;
 		double [] tmpWeights = new double [inputSize];
 		for(int i = 0; i < inputSize; i++)
 		{
@@ -29,11 +28,16 @@ public class Neuron {
 		this.inWeights = new BasicVector(tmpWeights);
 	}
 	
+	public void setInSignal(CRSMatrix inSignal)
+	{
+		this.inSignal = inSignal;
+	}
+	
 	//Taking the input signal and multiplying it by the weight vector to get the values vector, then passing the values in the values vector through the activation function
 	public BasicVector processInput(CRSMatrix matrix)
 	{
 	
-		BasicVector valueVector = (BasicVector) matrix.multiply(inWeights);
+		BasicVector valueVector = (BasicVector) inSignal.multiply(inWeights);
 		return applyActivation(valueVector);
 	}
 	
