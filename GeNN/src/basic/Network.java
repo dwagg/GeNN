@@ -24,21 +24,7 @@ public class Network {
 		
 		this.inputLayer = new InputLayer(ImportCSV.getNumOfVars(filePath));
 		this.hiddenLayers = new HiddenLayers(numOfHiddenLayers,hiddenLayerSizes,this.inputLayer);
-//		this.outputlayer = outputLayer;
-		
-		/*
-		char in = 'x';
-		do {
-			matrix << file;
-		}while(x != file.eof());
-		 */
-		//construct the matrices for the layers using data file and the size of the layers/connections 
-	}
-	
-	public Matrix buildInputDataMatrix(File dataFile, InputLayer inputLayer)
-	{
-		CRSMatrix m = CRSMatrix.zero(10, 10);
-		return m;
+		this.outputlayer = new OutputLayer(1,this.hiddenLayers.getHiddenOutputLayer());
 	}
 	
 	public static double tanh(double in)

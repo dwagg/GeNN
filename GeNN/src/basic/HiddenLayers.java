@@ -64,4 +64,9 @@ public class HiddenLayers {
 		
 		return layers.get(numOfLayers -1).prepOutSignal();
 	}
+
+	public Layer getHiddenOutputLayer()
+	{
+		return layers.get(layers.size() -1);
+	}
 }

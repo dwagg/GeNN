@@ -11,8 +11,8 @@ import org.la4j.matrix.sparse.CRSMatrix;
 
 public class OutputLayer extends Layer{
 
-	public OutputLayer(int numOfNeurons, int incomingSignals){
-		super(numOfNeurons, incomingSignals);
+	public OutputLayer(int numOfNeurons, Layer hiddenOutputLayer){
+		super(numOfNeurons, hiddenOutputLayer.prepOutSignal().columns());
 		
 	}
 }

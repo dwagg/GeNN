@@ -25,9 +25,19 @@ public class Main {
 		HiddenLayers hid = new HiddenLayers(1,hiddenLayerSizes,inLayer);
 		CRSMatrix hOut = hid.processOutput();
 	//	CRSMatrix lOut = l.prepOutSignal();
-		OutputLayer outLayer = new OutputLayer(1,hOut.columns());
+		OutputLayer outLayer = new OutputLayer(1,hid.getHiddenOutputLayer());
 		outLayer.initLayer(hOut);
 		CRSMatrix out = outLayer.prepOutSignal();
+
+		for (int i = 0; i < out.columns(); i++)
+		{
+			for (int j = 0; j < out.rows(); j++)
+			{
+				System.out.print(out.get(j, i) + " ");
+			}
+			System.out.println("");
+		}
+
 		ImportCSV.ImportData("./dummy/data.csv");
 	}
 }
