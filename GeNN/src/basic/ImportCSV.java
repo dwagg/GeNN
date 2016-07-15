@@ -9,6 +9,7 @@ package basic;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -17,12 +18,13 @@ import java.util.Scanner;
 import org.la4j.Matrix;
 import org.la4j.Vector;
 import org.la4j.matrix.sparse.CRSMatrix;
+import org.la4j.vector.dense.BasicVector;
 
 public class ImportCSV {
 	protected String [] data;
 	
 	//Importing data from a csv file with relative path fileName
-	public static Matrix ImportData(String filePath)
+	public static Matrix ImportData(String filePath, int targetColumn)
 	{
 		int numOfColumns=0;
 		int numOfRows = 0;
@@ -43,16 +45,19 @@ public class ImportCSV {
 				//splitting all of the values from the line into the separate values
 				String [] individual = fileScanner.next().split(",");
 				if (numOfColumns == 0)
-					numOfColumns = individual.length;
+					numOfColumns = individual.length - 1;
 				if (individual.length != 0)
 					numOfRows++;
 				//for all data extracted, add it row-wise into a list 
-				for (int i = 0; i < numOfColumns; i++)
+				for (int i = 0; i < numOfColumns + 1; i++)
 				{
-					//depending on platform's new line policy remove carriage returns
-					if (individual[i].endsWith("\r"))
-						individual[i] = individual[i].substring(0, individual[i].length()-1);
-					data.add(individual[i]);
+					if (i != targetColumn)
+					{
+						//depending on platform's new line policy remove carriage returns
+						if (individual[i].endsWith("\r"))
+							individual[i] = individual[i].substring(0, individual[i].length()-1);
+						data.add(individual[i]);
+					}
 				}
 
 			}
@@ -71,7 +76,6 @@ public class ImportCSV {
 			dataConverted[i] = Double.parseDouble(data.get(i));
 		}
 		matrix = CRSMatrix.from1DArray(numOfRows,numOfColumns, dataConverted);
-		matrix.getColumn(1);
 		return matrix;
 	}
 	
@@ -113,6 +117,40 @@ public class ImportCSV {
 		return CRSMatrix.from1DArray(matrix.rows(), matrix.columns(), arrNorms);
 	}
 	
+	public static BasicVector normalizeData(BasicVector vector)
+	{
+		ArrayList<Double> norms = new ArrayList<Double>();
+	//	ArrayList<Double> stdDevs = new ArrayList<Double>();
+		double ave = 0;
+		//First get the averages of the columns and the standard deviation of each column
+		
+		ave += vector.sum() / vector.length();
+
+		double stdDev = 0;
+		for (int i = 0; i < vector.length(); i++)
+		{
+			stdDev += Math.pow(vector.get(i) - ave,2);
+		}
+		stdDev = Math.sqrt(stdDev/vector.length());
+	//	stdDevs.add(stdDev);
+		
+		for (int j = 0; j < vector.length(); j++)
+		{	
+
+			double tmp = vector.get(j) - ave;
+			if (stdDev != 0)
+				tmp /= stdDev;
+			norms.add(tmp);
+				
+		}
+		double [] arrNorms = new double [norms.size()];
+		for (int i = 0; i < norms.size(); i++)
+		{
+			arrNorms[i] = norms.get(i);
+		}
+		return new BasicVector(arrNorms);
+	}
+	
 	public static int getNumOfVars(String filePath)
 	{
 		int sizeOfInput = 0;
@@ -142,6 +180,40 @@ public class ImportCSV {
 				e.printStackTrace();
 			}
 		return sizeOfInput;
+	}
+	
+	public static BasicVector getTargetVector(String filePath, int targetColumn)
+	{
+		ArrayList<Double> targetValueList = new ArrayList<>();
+		URL url = ClassLoader.getSystemClassLoader().getResource(filePath);
+		try {
+			
+			File inFile = new File(url.toURI());
+			Scanner scanner = new Scanner(inFile);
+			scanner.useDelimiter("\n");
+			int numOfVars = getNumOfVars(filePath);
+			while(scanner.hasNext())
+			{
+				String tmp = scanner.next();
+				String [] valueArr = new String [numOfVars];
+				valueArr = tmp.split(",");
+				targetValueList.add(Double.valueOf(valueArr[targetColumn]));
+			}
+			scanner.close();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		double [] targetArr = new double[targetValueList.size()];
+		for (int i =0; i < targetValueList.size(); i++)
+		{
+			targetArr[i] = targetValueList.get(i);
+		}
+		return new BasicVector(targetArr);
+
 	}
 	
 }

@@ -11,20 +11,45 @@ import java.util.ArrayList;
 import org.la4j.Matrix;
 import org.la4j.matrix.*;
 import org.la4j.matrix.sparse.CRSMatrix;
+import org.la4j.vector.dense.BasicVector;
 
 public class Network {
 
 	protected InputLayer inputLayer;
 	protected HiddenLayers hiddenLayers;
 	protected OutputLayer outputlayer;
-	
+	protected BasicVector targetValueVector;
+	//protected BasicVector 
 	//Constructor takes an input layer, hidden layers and an output layer as well as a file name where the data is
-	public Network(String filePath, int numOfHiddenLayers,ArrayList<Integer> hiddenLayerSizes, int outputLayerSize)
+	public Network(String filePath,int targetColumn, int numOfHiddenLayers,ArrayList<Integer> hiddenLayerSizes, int outputLayerSize)
 	{
 		
-		this.inputLayer = new InputLayer(ImportCSV.getNumOfVars(filePath));
+		this.inputLayer = new InputLayer(ImportCSV.getNumOfVars(filePath)-1);
+		this.inputLayer.initLayer((CRSMatrix) ImportCSV.ImportData(filePath, targetColumn));
 		this.hiddenLayers = new HiddenLayers(numOfHiddenLayers,hiddenLayerSizes,this.inputLayer);
-		this.outputlayer = new OutputLayer(1,this.hiddenLayers.getHiddenOutputLayer());
+		this.hiddenLayers.processOutput();
+		this.outputlayer = new OutputLayer(outputLayerSize,this.hiddenLayers.getHiddenOutputLayer());
+		this.outputlayer.initLayer(this.hiddenLayers.getHiddenOutputLayer().prepOutSignal());
+		this.targetValueVector = ImportCSV.getTargetVector(filePath, targetColumn);
+		normalizeTargetVector();
+	}
+	
+	public CRSMatrix getNetworkOutput()
+	{
+		return this.outputlayer.prepOutSignal();
+	}
+	
+	public CRSMatrix getSoftMaxOutput()
+	{
+		return this.outputlayer.softMax();
+	}
+	
+	private void normalizeTargetVector()
+	{
+		for (int i = 0; i < this.targetValueVector.length(); i++)
+		{
+			this.targetValueVector = ImportCSV.normalizeData(this.targetValueVector);
+		}
 	}
 	
 	public static double tanh(double in)
