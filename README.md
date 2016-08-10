@@ -11,4 +11,6 @@ Ideally GeNN Will be able to take arbitrary input and build an artificial neural
 
 The Goal of GeNN is to have a ANN interface there is very easy to pick up and plug data into it only needing to specify the shape of the network and letting it be concerned with the shape of the data. The current state is that it only works as a classifier, thus restricting the data allowed, and it is currently build specifically to take the MNist contained. 
 
+The only thing needed to build this that is different from building a Java Hello world program is adding the la4j jar that is in the resources folder to the classpath. 
+
 For more information or for bugs contact dwagg@pdx.edu
