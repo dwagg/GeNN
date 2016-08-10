@@ -16,32 +16,13 @@ public class Main {
 
 	public static void main(String[] args) 
 	{
-		String filePath = "./dummy/data.csv";
+		String filePath = "./dummy/mnist_train.csv";
 		System.out.println("print");
-		InputLayer inLayer = new InputLayer(3);
-		inLayer.initLayer((CRSMatrix) ImportCSV.ImportData(filePath,1));
-//		Layer l = new Layer(4,inLayer.getInput().columns());
-//		l.initLayer(inLayer.getInput());
 		ArrayList<Integer> hiddenLayerSizes = new ArrayList<>();
-		hiddenLayerSizes.add(4);
-		HiddenLayers hid = new HiddenLayers(1,hiddenLayerSizes,inLayer);
-		CRSMatrix hOut = hid.processOutput();
-	//	CRSMatrix lOut = l.prepOutSignal();
-		OutputLayer outLayer = new OutputLayer(1,hid.getHiddenOutputLayer());
-		outLayer.initLayer(hOut);
-		//CRSMatrix out = outLayer.prepOutSignal();
-		BasicVector targetValues = ImportCSV.getTargetVector(filePath, 1);
-		Network net = new Network(filePath,1,1,hiddenLayerSizes,2);
-		CRSMatrix out = net.getSoftMaxOutput();
-		for (int i = 0; i < out.rows(); i++)
-		{
-			for (int j = 0; j < out.columns(); j++)
-			{
-				System.out.print(out.get(i, j) + " ");
-			}
-			System.out.println("");
-		}
+		hiddenLayerSizes.add(150);
 
-		ImportCSV.ImportData("./dummy/data.csv",1);
+		Network net = new Network(filePath,0,1,hiddenLayerSizes,10,.001d, 200);
+
+
 	}
 }

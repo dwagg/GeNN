@@ -24,10 +24,15 @@ public class InputLayer extends Layer{
 	
 	public void initLayer(CRSMatrix input)
 	{
-		this.input = input;
+		this.input = ImportCSV.normalizeData(input);
 		for(int i = 0; i < this.numOfNeurons * numOfNeurons;i++)
 		{
 			this.weights.add(1d);
 		}
+	}
+	
+	public boolean isInputLayer()
+	{
+		return true;
 	}
 }

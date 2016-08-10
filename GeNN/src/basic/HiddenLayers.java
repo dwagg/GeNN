@@ -64,6 +64,11 @@ public class HiddenLayers {
 		
 		return layers.get(numOfLayers -1).prepOutSignal();
 	}
+	
+	public void setInput(CRSMatrix input)
+	{
+		layers.get(0).setInput(input);
+	}
 
 	public Layer getHiddenOutputLayer()
 	{

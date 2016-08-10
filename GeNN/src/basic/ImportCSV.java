@@ -24,7 +24,7 @@ public class ImportCSV {
 	protected String [] data;
 	
 	//Importing data from a csv file with relative path fileName
-	public static Matrix ImportData(String filePath, int targetColumn)
+	public static Matrix ImportData(String filePath, int targetColumn, int count)
 	{
 		int numOfColumns=0;
 		int numOfRows = 0;
@@ -39,9 +39,15 @@ public class ImportCSV {
 			Scanner fileScanner = new Scanner(inFile);
 			fileScanner.useDelimiter("\n");
 			
-			//While file has another line grab line to process
-			while (fileScanner.hasNext())
+			int counter = 0;
+			if(count < 0)
 			{
+				count = Integer.MAX_VALUE;
+			}
+			//While file has another line grab line to process
+			while (fileScanner.hasNext() && counter<count)
+			{
+				counter++;
 				//splitting all of the values from the line into the separate values
 				String [] individual = fileScanner.next().split(",");
 				if (numOfColumns == 0)
@@ -75,46 +81,22 @@ public class ImportCSV {
 		for (int i = 0; i < numOfColumns * numOfRows; i++){
 			dataConverted[i] = Double.parseDouble(data.get(i));
 		}
-		matrix = CRSMatrix.from1DArray(numOfRows,numOfColumns, dataConverted);
+		matrix = CRSMatrix.from1DArray(count,numOfColumns, dataConverted);
 		return matrix;
 	}
 	
 	public static CRSMatrix normalizeData(Matrix matrix)
 	{
-		ArrayList<Double> norms = new ArrayList<Double>();
-		ArrayList<Double> stdDevs = new ArrayList<Double>();
-		ArrayList<Double> aves = new ArrayList<Double>();
-		//First get the averages of the columns and the standard deviation of each column
-		for (int i = 0; i < matrix.columns(); i++)
+		CRSMatrix normalized = CRSMatrix.zero(matrix.rows(), matrix.columns());
+		for (int i = 0; i < matrix.rows(); i++)
 		{
-			double ave = 0;
-			Vector colVector = matrix.getColumn(i);
-			ave += colVector.sum() / colVector.length();
-			aves.add(ave);
-			double stdDev = 0;
-			for (int j = 0; j < colVector.length(); j++)
+			for (int j = 0; j < matrix.columns(); j++)
 			{
-				stdDev += Math.pow(colVector.get(j) - ave,2);
+				normalized.set(i, j, matrix.get(i, j)/256);
 			}
-			stdDev = Math.sqrt(stdDev/colVector.length());
-			stdDevs.add(stdDev);
 		}
-		for (int j = 0; j < matrix.rows(); j++)
-		{	
-			for (int i = 0; i < matrix.columns(); i++)
-			{
-				double tmp = matrix.getColumn(i).get(j) - aves.get(i);
-				if (stdDevs.get(i) != 0)
-					tmp /= stdDevs.get(i);
-				norms.add(tmp);
-			}	
-		}
-		double [] arrNorms = new double [norms.size()];
-		for (int i = 0; i < norms.size(); i++)
-		{
-			arrNorms[i] = norms.get(i);
-		}
-		return CRSMatrix.from1DArray(matrix.rows(), matrix.columns(), arrNorms);
+
+		return normalized;
 	}
 	
 	public static BasicVector normalizeData(BasicVector vector)
@@ -182,7 +164,7 @@ public class ImportCSV {
 		return sizeOfInput;
 	}
 	
-	public static BasicVector getTargetVector(String filePath, int targetColumn)
+	public static BasicVector getTargetVector(String filePath, int targetColumn, int count)
 	{
 		ArrayList<Double> targetValueList = new ArrayList<>();
 		URL url = ClassLoader.getSystemClassLoader().getResource(filePath);
@@ -192,8 +174,14 @@ public class ImportCSV {
 			Scanner scanner = new Scanner(inFile);
 			scanner.useDelimiter("\n");
 			int numOfVars = getNumOfVars(filePath);
-			while(scanner.hasNext())
+			int counter = 0;
+			if (count < 0)
 			{
+				count = Integer.MAX_VALUE;
+			}
+			while(scanner.hasNext() && counter < count)
+			{
+				counter++;
 				String tmp = scanner.next();
 				String [] valueArr = new String [numOfVars];
 				valueArr = tmp.split(",");
