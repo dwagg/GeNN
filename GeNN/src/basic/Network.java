@@ -27,12 +27,22 @@ public class Network {
 	public Network(String filePath,int targetColumn, int numOfHiddenLayers,ArrayList<Integer> hiddenLayerSizes, int outputLayerSize, double learningRate, int numOfTrainingExamples)
 	{
 		
+//		this.inputLayer = new InputLayer(ImportCSV.getNumOfVars(filePath)-1);
+//		this.inputLayer.initLayer((CRSMatrix) ImportCSV.ImportData(filePath, targetColumn, numOfTrainingExamples));
+//		this.hiddenLayers = new HiddenLayers(numOfHiddenLayers,hiddenLayerSizes,this.inputLayer);
+//		this.hiddenLayers.processOutput();
+//		this.outputlayer = new OutputLayer(outputLayerSize,this.hiddenLayers.getHiddenOutputLayer());
+//		this.outputlayer.initLayer(this.hiddenLayers.getHiddenOutputLayer().prepOutSignal());
+//		this.targetValueVector = ImportCSV.getTargetVector(filePath, targetColumn,numOfTrainingExamples);
+//		this.learningRate = learningRate;
+//		this.targetOutput = buildtargetOutput(outputLayerSize); 
+		
 		this.inputLayer = new InputLayer(ImportCSV.getNumOfVars(filePath)-1);
 		this.inputLayer.initLayer((CRSMatrix) ImportCSV.ImportData(filePath, targetColumn, numOfTrainingExamples));
 		this.hiddenLayers = new HiddenLayers(numOfHiddenLayers,hiddenLayerSizes,this.inputLayer);
 		this.hiddenLayers.processOutput();
-		this.outputlayer = new OutputLayer(outputLayerSize,this.hiddenLayers.getHiddenOutputLayer());
-		this.outputlayer.initLayer(this.hiddenLayers.getHiddenOutputLayer().prepOutSignal());
+		this.outputlayer = new OutputLayer(outputLayerSize,this.inputLayer);
+		this.outputlayer.initLayer(this.inputLayer.prepOutSignal());
 		this.targetValueVector = ImportCSV.getTargetVector(filePath, targetColumn,numOfTrainingExamples);
 		this.learningRate = learningRate;
 		this.targetOutput = buildtargetOutput(outputLayerSize); 
@@ -42,14 +52,16 @@ public class Network {
 		//This will go in the backprop function as the first step, then adjust weights, then do hidden layers
 //		this.outputlayer.calculateDelta(this.hiddenLayers.getHiddenOutputLayer(), targetValueVector);
 		// run(this.inputLayer.prepOutSignal());
-		for(int i = 0; i < 10; i++)
+		for(int i = 0; i < 8; i++)
 		{
 			CRSMatrix m1 = run(this.inputLayer.getInput());
 			ArrayList<BasicVector> deltas = backProp(this.outputlayer);
 		}
 
-		CRSMatrix m2 = run(ImportCSV.normalizeData((CRSMatrix) ImportCSV.ImportData("./dummy/mnist_test.csv", targetColumn, 15)));
+		CRSMatrix m2 = run(ImportCSV.normalizeData((CRSMatrix) ImportCSV.ImportData("./dummy/mnist_test.csv", targetColumn, 100)));
+		BasicVector targets = ImportCSV.getTargetVector("./dummy/mnist_test.csv", 0,100 );
 		BasicVector guesses = new BasicVector(m2.rows());
+		int correctGuesses = 0;
 		for(int i = 0; i < m2.rows(); i++)
 		{
 			Vector a = m2.getRow(i);
@@ -64,7 +76,12 @@ public class Network {
 				}
 			}
 			guesses.set(i, col);
+			if (col == targets.get(i))
+			{
+				correctGuesses++;
+			}
 		}
+		double percentCorrect = correctGuesses / 100.0;
 		int x = 0;
 		x = x+1;
 		
@@ -76,8 +93,8 @@ public class Network {
 //		ms.setRow(0, input.getRow(0));
 		this.inputLayer.setInput(input);
 		CRSMatrix m = this.inputLayer.prepOutSignal();
-		this.hiddenLayers.setInput(m);
-		m = this.hiddenLayers.processOutput();
+		//this.hiddenLayers.setInput(m);
+		//m = this.hiddenLayers.processOutput();
 		this.outputlayer.setInput(m);
 		return this.outputlayer.prepOutSignal();
 	}
@@ -87,46 +104,49 @@ public class Network {
 		ArrayList<BasicVector> outputDeltas = new ArrayList<>();
 		for(int i = 0; i < targetOutput.size(); i++)
 		{
-			outputDeltas.add(layer.calculateDelta(this.hiddenLayers.getHiddenOutputLayer(), targetOutput.get(i)));
+			//outputDeltas.add(layer.calculateDelta(this.hiddenLayers.getHiddenOutputLayer(), targetOutput.get(i)));
+			outputDeltas.add(layer.calculateDelta(this.inputLayer, targetOutput.get(i)));
 		}
-		
-		ArrayList<BasicVector> errors = layer.getErrosList(targetOutput);
-		ArrayList<BasicVector> dOutdNet = layer.getdOutdNetList();
-		ArrayList<BasicVector> dOutdNetH = this.hiddenLayers.getHiddenOutputLayer().getdOutdNetList();
-		
-		ArrayList<BasicVector> dEdNet = new ArrayList<>();
-		for(int i = 0; i < errors.size(); i++)
-		{
-			BasicVector node_dEdNet = new BasicVector(errors.get(0).length());
-			for (int j = 0; j < errors.get(0).length(); j++)
-			{
-				node_dEdNet.set(j,-1 * errors.get(i).get(j)*dOutdNet.get(i).get(j));
-			}
-			dEdNet.add(node_dEdNet);
-		}
-		ArrayList<Double> oWeights = layer.getWeights();
-		ArrayList<BasicVector> hiddenDeltas = new ArrayList<>();
-		//ArrayList<ArrayList<BasicVector>> hDeltas = new ArrayList<>();
-		for (int k = 0; k < dEdNet.get(0).length(); k++)
-		{
-			BasicVector nodeDelta = new BasicVector(oWeights.size()/dEdNet.size());
+//		
+//		ArrayList<BasicVector> errors = layer.getErrosList(targetOutput);
+//		ArrayList<BasicVector> dOutdNet = layer.getdOutdNetList();
+//		ArrayList<BasicVector> dOutdNetH = this.hiddenLayers.getHiddenOutputLayer().getdOutdNetList();
+//		
+//		ArrayList<BasicVector> dEdNet = new ArrayList<>();
+//		for(int i = 0; i < errors.size(); i++)
+//		{
+//			BasicVector node_dEdNet = new BasicVector(errors.get(0).length());
+//			for (int j = 0; j < errors.get(0).length(); j++)
+//			{
+//				node_dEdNet.set(j,-1 * errors.get(i).get(j)*dOutdNet.get(i).get(j));
+//			}
+//			dEdNet.add(node_dEdNet);
+//		}
+//		ArrayList<Double> oWeights = layer.getWeights();
+//		ArrayList<BasicVector> hiddenDeltas = new ArrayList<>();
+//		//ArrayList<ArrayList<BasicVector>> hDeltas = new ArrayList<>();
+//		for (int k = 0; k < dEdNet.get(0).length(); k++)
+//		{
+//			BasicVector nodeDelta = new BasicVector(oWeights.size()/dEdNet.size());
+//
+//			for (int i = 0; i < oWeights.size()/dEdNet.size(); i++)
+//			{
+//				BasicVector v = new BasicVector(dEdNet.size());
+//				for(int j = 0; j < dEdNet.size(); j++)
+//				{
+//					v.set(j,oWeights.get(dEdNet.size() * i + j) * dEdNet.get(j).get(k));
+//				}
+//
+//				nodeDelta.set(i, v.sum() * dOutdNetH.get(i).get(k));
+//			}
+//			
+//			hiddenDeltas.add(nodeDelta);
+//		//	hDeltas.add(nodeDeltas);
+//		}
+//		this.outputlayer.updateWeights(this.hiddenLayers.getHiddenOutputLayer(), learningRate, outputDeltas);
+		//this.hiddenLayers.getHiddenOutputLayer().updateWeights(inputLayer, learningRate, hiddenDeltas);
+		this.outputlayer.updateWeights(this.inputLayer, learningRate, outputDeltas);
 
-			for (int i = 0; i < oWeights.size()/dEdNet.size(); i++)
-			{
-				BasicVector v = new BasicVector(dEdNet.size());
-				for(int j = 0; j < dEdNet.size(); j++)
-				{
-					v.set(j,oWeights.get(dEdNet.size() * i + j) * dEdNet.get(j).get(k));
-				}
-
-				nodeDelta.set(i, v.sum() * dOutdNetH.get(i).get(k));
-			}
-			
-			hiddenDeltas.add(nodeDelta);
-		//	hDeltas.add(nodeDeltas);
-		}
-		this.outputlayer.updateWeights(this.hiddenLayers.getHiddenOutputLayer(), learningRate, outputDeltas);
-		this.hiddenLayers.getHiddenOutputLayer().updateWeights(inputLayer, learningRate, hiddenDeltas);
 		return outputDeltas;
 	}
 	

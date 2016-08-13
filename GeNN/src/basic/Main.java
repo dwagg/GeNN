@@ -19,9 +19,9 @@ public class Main {
 		String filePath = "./dummy/mnist_train.csv";
 		System.out.println("print");
 		ArrayList<Integer> hiddenLayerSizes = new ArrayList<>();
-		hiddenLayerSizes.add(150);
+		hiddenLayerSizes.add(200);
 
-		Network net = new Network(filePath,0,1,hiddenLayerSizes,10,.001d, 200);
+		Network net = new Network(filePath,0,1,hiddenLayerSizes,10,.001d, 250);
 
 
 	}
