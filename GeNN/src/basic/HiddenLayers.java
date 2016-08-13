@@ -16,6 +16,7 @@ public class HiddenLayers {
 	private ArrayList<Layer> layers;
 	private InputLayer inLayer; 
 	
+	//Because of issues with back prop This class is not currently being used
 	public HiddenLayers(int numOfLayers, ArrayList<Integer> sizeOfLayers, InputLayer inLayer)
 	{
 		assert numOfLayers == sizeOfLayers.size();

@@ -17,14 +17,7 @@ public class OutputLayer extends Layer{
 	public OutputLayer(int numOfNeurons, Layer hiddenOutputLayer){
 		super(numOfNeurons, hiddenOutputLayer.prepOutSignal().columns());
 	}
-	
-//	public CRSMatrix prepOutSignal()
-//	{
-//		CRSMatrix out = super.prepOutSignal();
-//		neurons.get(0).nodeDelta(.1);
-//		return out;
-//	}
-	
+		
 	public CRSMatrix softMax()
 	{
 		ArrayList<BasicVector> vectorList = new ArrayList<>();

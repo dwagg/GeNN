@@ -24,7 +24,7 @@ public class Network {
 	protected ArrayList<BasicVector> targetOutput;
 	//protected BasicVector 
 	//Constructor takes an input layer, hidden layers and an output layer as well as a file name where the data is
-	public Network(String filePath,int targetColumn, int numOfHiddenLayers,ArrayList<Integer> hiddenLayerSizes, int outputLayerSize, double learningRate, int numOfTrainingExamples)
+	public Network(String trainingFilePath,String testFilePath,int targetColumn, int numOfHiddenLayers,ArrayList<Integer> hiddenLayerSizes, int outputLayerSize, double learningRate, int numOfTrainingExamples, int numOfGenerations)
 	{
 		
 //		this.inputLayer = new InputLayer(ImportCSV.getNumOfVars(filePath)-1);
@@ -37,13 +37,13 @@ public class Network {
 //		this.learningRate = learningRate;
 //		this.targetOutput = buildtargetOutput(outputLayerSize); 
 		
-		this.inputLayer = new InputLayer(ImportCSV.getNumOfVars(filePath)-1);
-		this.inputLayer.initLayer((CRSMatrix) ImportCSV.ImportData(filePath, targetColumn, numOfTrainingExamples));
+		this.inputLayer = new InputLayer(ImportCSV.getNumOfVars(trainingFilePath)-1);
+		this.inputLayer.initLayer((CRSMatrix) ImportCSV.ImportData(trainingFilePath, targetColumn, numOfTrainingExamples));
 		this.hiddenLayers = new HiddenLayers(numOfHiddenLayers,hiddenLayerSizes,this.inputLayer);
 		this.hiddenLayers.processOutput();
 		this.outputlayer = new OutputLayer(outputLayerSize,this.inputLayer);
 		this.outputlayer.initLayer(this.inputLayer.prepOutSignal());
-		this.targetValueVector = ImportCSV.getTargetVector(filePath, targetColumn,numOfTrainingExamples);
+		this.targetValueVector = ImportCSV.getTargetVector(trainingFilePath, targetColumn,numOfTrainingExamples);
 		this.learningRate = learningRate;
 		this.targetOutput = buildtargetOutput(outputLayerSize); 
 
@@ -52,14 +52,14 @@ public class Network {
 		//This will go in the backprop function as the first step, then adjust weights, then do hidden layers
 //		this.outputlayer.calculateDelta(this.hiddenLayers.getHiddenOutputLayer(), targetValueVector);
 		// run(this.inputLayer.prepOutSignal());
-		for(int i = 0; i < 8; i++)
+		for(int i = 0; i < numOfGenerations; i++)
 		{
 			CRSMatrix m1 = run(this.inputLayer.getInput());
 			ArrayList<BasicVector> deltas = backProp(this.outputlayer);
 		}
 
-		CRSMatrix m2 = run(ImportCSV.normalizeData((CRSMatrix) ImportCSV.ImportData("./dummy/mnist_test.csv", targetColumn, 100)));
-		BasicVector targets = ImportCSV.getTargetVector("./dummy/mnist_test.csv", 0,100 );
+		CRSMatrix m2 = run(ImportCSV.normalizeData((CRSMatrix) ImportCSV.ImportData(testFilePath, targetColumn, 100)));
+		BasicVector targets = ImportCSV.getTargetVector(testFilePath, 0,100 );
 		BasicVector guesses = new BasicVector(m2.rows());
 		int correctGuesses = 0;
 		for(int i = 0; i < m2.rows(); i++)
@@ -82,9 +82,7 @@ public class Network {
 			}
 		}
 		double percentCorrect = correctGuesses / 100.0;
-		int x = 0;
-		x = x+1;
-		
+		System.out.println("The percentage of digits guessed correctly is: " + percentCorrect + " %");		
 	}
 	
 	public CRSMatrix run(CRSMatrix input)
@@ -262,36 +260,12 @@ public class Network {
 		return mse;
 	}
 	
-//	public ArrayList<BasicVector> getOutputErrors()
-//	{
-//		return this.outputlayer.getErrosList(targetOutput);
-//	}
-//	
-//	public BasicVector getAverageErrors()
-//	{
-//		return this.outputlayer.getAverageError(targetValueVector);
-//	}
-	
+
 	public BasicVector getTargetValueVector()
 	{
 		return targetValueVector;
 	}
 	
-//	//Thanks to "Welch Labs" tutorials on youtube for help with gradient descent and back propagation. 
-//	//Found at 
-//	public CRSMatrix costFunctionPrime(Vector targetValues)
-//	{
-//		CRSMatrix yHat = this.outputlayer.prepOutSignal();
-//		for (int i = 0; i < targetValues.length(); i++)
-//		{
-//			
-//		}
-//		return CRSMatrix.zero(1, 1);
-//	}
-	
-	//Back prop equation: deltaW.sub(t) = -Epsilon * dE/dW.sub(t) + alpha deltaWsub(t-1)
-	//where:
-	//	alpha = momentum
-	//	epsilon = learning rate
-	//	dE/dW.sub(t) = partial derivative of E with respect to W.sub(t) 
+//Thanks to "Welch Labs" tutorials on youtube for help with gradient descent and back propagation. 
+
 }

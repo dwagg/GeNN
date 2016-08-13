@@ -48,7 +48,7 @@ public class Layer {
 	
 	public void generateWeights()
 	{
-		Random rand = new Random(100);
+		Random rand = new Random();
 		for (int i = 0; i < numOfNeurons * incomingSignals;i++)
 		{
 			weights.add(rand.nextDouble()/100);
@@ -79,7 +79,6 @@ public class Layer {
 		{
 			listOfVectors.add(neurons.get(i).fire(input));
 		}
-		//CRSMatrix matrix = CRSMatrix.zero(numOfNeurons, input.rows());
 		CRSMatrix matrix = CRSMatrix.zero(listOfVectors.get(0).length(),listOfVectors.size());
 		
 		for (int i = 0; i < listOfVectors.size(); i++)
@@ -208,8 +207,6 @@ public class Layer {
 	{
 		for (int k = 0; k < deltas.size(); k++)
 		{
-		//	BasicVector deltas = calculateDelta(prev, targetOutputList.get(k));
-			//double updateBy;
 			for (int i = 0; i < numOfNeurons; i++)
 			{
 				BasicVector updateBy = new BasicVector(prev.getNumOfNeurons());
